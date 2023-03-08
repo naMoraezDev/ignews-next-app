@@ -1,9 +1,21 @@
 import Head from "next/head";
+import { RichText } from "prismic-dom";
 import { createClient } from "../../../prismicio";
 import styles from "./styles.module.scss";
 
-export default function Posts({ page }) {
-  console.log(page);
+type Post = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  updatedAt: string;
+};
+
+type PostsProps = {
+  posts: Post[];
+};
+
+export default function Posts({ posts }: PostsProps) {
+  console.log(posts);
   return (
     <>
       <Head>
@@ -12,30 +24,13 @@ export default function Posts({ page }) {
 
       <main className={styles.container}>
         <div className={styles.posts}>
-          <a href="#">
-            <time>12 de março de 2023</time>
-            <strong>Código Limpo: reflexão e prática</strong>
-            <p>
-              Um conjunto de filosofias extremamente importantes e populares no
-              ecossistema
-            </p>
-          </a>
-          <a href="#">
-            <time>12 de março de 2023</time>
-            <strong>Código Limpo: reflexão e prática</strong>
-            <p>
-              Um conjunto de filosofias extremamente importantes e populares no
-              ecossistema
-            </p>
-          </a>
-          <a href="#">
-            <time>12 de março de 2023</time>
-            <strong>Código Limpo: reflexão e prática</strong>
-            <p>
-              Um conjunto de filosofias extremamente importantes e populares no
-              ecossistema
-            </p>
-          </a>
+          {posts.map((post) => (
+            <a key={post.slug} href="#">
+              <time>{post.updatedAt}</time>
+              <strong>{post.title}</strong>
+              <p>{post.excerpt}</p>
+            </a>
+          ))}
         </div>
       </main>
     </>
@@ -45,11 +40,27 @@ export default function Posts({ page }) {
 export async function getStaticProps() {
   const client = createClient();
 
-  const page = await client.getAllByType("post");
+  const results = await client.getAllByType("post");
+
+  const posts = results.map((post) => ({
+    slug: post.uid,
+    title: RichText.asText(post.data.title),
+    excerpt:
+      post.data.content.find((content) => content.type === "paragraph")?.text ??
+      "",
+    updatedAt: new Date(post.last_publication_date).toLocaleDateString(
+      "pt-BR",
+      {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }
+    ),
+  }));
 
   return {
     props: {
-      page,
+      posts,
     },
   };
 }
