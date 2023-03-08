@@ -18,7 +18,7 @@ export function ActiveLinkView({
 
   return (
     <Link {...props} className={className}>
-      children
+      {children}
     </Link>
   );
 }
