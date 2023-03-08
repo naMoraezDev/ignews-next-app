@@ -1,0 +1,1 @@
+export {ActiveLinkView as ActiveLink} from './view'
