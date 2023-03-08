@@ -1,7 +1,5 @@
 {
-  "apiEndpoint": "https://igjonsom.prismic.io/api/v2",
-  "libraries": [
-    "@/slices"
-  ],
+  "apiEndpoint": "https://igjonsom.cdn.prismic.io/api/v2",
+  "libraries": ["@/slices"],
   "_latest": "0.7.1"
 }

@@ -1,7 +1,9 @@
 import Head from "next/head";
+import { createClient } from "../../../prismicio";
 import styles from "./styles.module.scss";
 
-export default function Posts() {
+export default function Posts({ page }) {
+  console.log(page);
   return (
     <>
       <Head>
@@ -38,4 +40,16 @@ export default function Posts() {
       </main>
     </>
   );
+}
+
+export async function getStaticProps() {
+  const client = createClient();
+
+  const page = await client.getAllByType("post");
+
+  return {
+    props: {
+      page,
+    },
+  };
 }
