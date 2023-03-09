@@ -13,8 +13,6 @@ export function ActiveLinkView({
 }: ActiveLinkProps) {
   const { asPath, query } = useRouter();
 
-  console.log(query);
-
   const className = asPath === props.href ? activeClassName : "";
 
   return (
