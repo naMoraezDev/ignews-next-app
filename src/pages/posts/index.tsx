@@ -3,6 +3,7 @@ import { RichText } from "prismic-dom";
 import { createClient } from "../../../prismicio";
 import Link from "next/link";
 import styles from "./styles.module.scss";
+import { useSession } from "next-auth/react";
 
 type Post = {
   slug: string;
@@ -16,6 +17,15 @@ type PostsProps = {
 };
 
 export default function Posts({ posts }: PostsProps) {
+  const { data: session } = useSession();
+
+  function handlePostPaths(post: Post) {
+    if (session?.activeSubscription) {
+      return `/posts/${post.slug}`;
+    } else {
+      return `/posts/preview/${post.slug}`;
+    }
+  }
   return (
     <>
       <Head>
@@ -25,7 +35,7 @@ export default function Posts({ posts }: PostsProps) {
       <main className={styles.container}>
         <div className={styles.posts}>
           {posts.map((post) => (
-            <Link key={post.slug} href={`/posts/${post.slug}`}>
+            <Link key={post.slug} href={handlePostPaths(post)}>
               <time>{post.updatedAt}</time>
               <strong>{post.title}</strong>
               <p>{post.excerpt}</p>
